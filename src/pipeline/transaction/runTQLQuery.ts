@@ -25,22 +25,24 @@ export const runTQLQuery: PipelineOperation = async (req, res) => {
 	if (!transaction) {
 		throw new Error("Can't create transaction");
 	}
-	const entityStream = transaction.query.getGroup(tqlRequest.entity);
+	const entityStream = transaction.query.fetch(tqlRequest.entity);
 
 	const rolesStreams = tqlRequest.roles?.map((role) => ({
 		...role,
-		stream: transaction.query.getGroup(role.request),
+		stream: transaction.query.fetch(role.request),
 	}));
 
 	const relationStreams = tqlRequest.relations?.map((relation) => ({
 		...relation,
-		stream: transaction.query.getGroup(relation.request),
+		stream: transaction.query.fetch(relation.request),
 	}));
+
 	const entityConceptMapGroups = await entityStream.collect();
 
 	/// The new json structure. Once attibutes are natively packed we will refacto the queries and use this
 	// const json = entityConceptMapGroups.flatMap((x) => x.conceptMaps.map((y) => y.toJSONRecord()));
 	// console.log('json', json);
+
 	const rolesConceptMapGroups = await Promise.all(
 		rolesStreams?.map(async (role) => ({
 			path: role.path,
@@ -64,5 +66,5 @@ export const runTQLQuery: PipelineOperation = async (req, res) => {
 			relations: relationConceptMapGroups,
 		}),
 	};
-	// console.log('rawTqlRes', res.rawTqlRes);
+	console.log('rawTqlRes', res.rawTqlRes);
 };

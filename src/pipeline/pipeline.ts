@@ -1,9 +1,9 @@
 /* eslint-disable no-await-in-loop */
-import type { ConceptMap, ConceptMapGroup } from 'typedb-driver';
+import type { ConceptMap, ConceptMapGroup, JSONObject } from 'typedb-driver';
 
 import { dispatchPipeline } from './control';
 import { buildBQLTree, parseTQLRes } from './postprocess';
-import { parseBQLQuery, buildTQLQuery } from './preprocess';
+import { parseBQLQuery, /* buildTQLQuery */ buildTQLFetchQuery } from './preprocess';
 import { buildTQLMutation } from './preprocess/buildTQLMutation';
 import { fillBQLMutation } from './preprocess/fill';
 import { parseBQLMutation } from './preprocess/parseBQLMutation';
@@ -43,16 +43,16 @@ type Request = {
 type Response = {
 	rawTqlRes?: {
 		// queries
-		entity?: ConceptMapGroup[];
+		entity?: ConceptMapGroup[] | JSONObject[];
 		roles?: {
 			path: string;
 			ownerPath: string;
-			conceptMapGroups: ConceptMapGroup[];
+			conceptMapGroups: ConceptMapGroup[] | JSONObject[];
 		}[];
 		relations?: {
 			relation: string;
 			entity: string;
-			conceptMapGroups: ConceptMapGroup[];
+			conceptMapGroups: ConceptMapGroup[] | JSONObject[];
 		}[];
 		// mutations
 		insertions?: ConceptMap[];
@@ -76,7 +76,7 @@ export type PipelineOperation = (req: Request, res: Response) => Promise<void | 
 type Pipeline = PipelineOperation[];
 
 const Pipelines: Record<string, Pipeline> = {
-	query: [parseBQLQuery, buildTQLQuery, runTQLQuery, parseTQLRes, dispatchPipeline],
+	query: [parseBQLQuery, buildTQLFetchQuery, runTQLQuery, parseTQLRes, dispatchPipeline],
 	mutation: [fillBQLMutation, preQuery, parseBQLMutation, buildTQLMutation, runTQLMutation, parseTQLRes],
 };
 

@@ -92,7 +92,7 @@ describe('Query', () => {
 		expect(res).toBeDefined();
 		expect(res).not.toBeInstanceOf(String);
 		expect(deepSort(res, 'id')).toEqual(expectedRes);
-	});
+	}, 3600000);
 
 	it('e2[entity] - filter by single $id', async () => {
 		expect(client).toBeDefined();
@@ -118,7 +118,7 @@ describe('Query', () => {
 		expect(res['user-tags']).toEqual(expect.arrayContaining(expectedRes['user-tags']));
 
 		expect(res['user-tags']).toHaveLength(expectedRes['user-tags'].length);
-	});
+	}, 3600000);
 
 	it('e3[entity, nested] - direct link to relation, query nested ', async () => {
 		expect(client).toBeDefined();

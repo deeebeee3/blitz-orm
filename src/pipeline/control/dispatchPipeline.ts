@@ -4,7 +4,7 @@ import { extractChildEntities, notNull } from '../../helpers';
 import type { RawBQLQuery } from '../../types';
 import type { PipelineOperation } from '../pipeline';
 import { parseTQLRes } from '../postprocess';
-import { buildTQLQuery } from '../preprocess';
+import { /* buildTQLQuery, */ buildTQLFetchQuery } from '../preprocess';
 import { runTQLQuery } from '../transaction';
 
 // todo: fix this
@@ -128,7 +128,7 @@ export const dispatchPipeline: PipelineOperation = async (req, res) => {
 							bqlRequest: newBqlRequest,
 						},
 						res,
-						pipeline: [buildTQLQuery, runTQLQuery, parseTQLRes, dispatchPipeline],
+						pipeline: [buildTQLFetchQuery, runTQLQuery, parseTQLRes, dispatchPipeline],
 					};
 				})
 				.filter(notNull);

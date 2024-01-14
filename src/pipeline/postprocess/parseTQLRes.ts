@@ -1,11 +1,11 @@
 import { isArray, isString, listify, mapEntries, unique, flat } from 'radash';
-import type { Concept, ConceptMapGroup } from 'typedb-driver';
+import type { Concept, ConceptMapGroup, JSONObject } from 'typedb-driver';
 
 import { extractChildEntities, getPath } from '../../helpers';
 import type { BQLMutationBlock, EnrichedBormSchema, EnrichedBormRelation } from '../../types';
 import type { Entity, EntityName, ID, PipelineOperation, RelationName } from '../pipeline';
 
-const extractEntities = (conceptMapGroups: ConceptMapGroup[], schema: EnrichedBormSchema): Entity[] => {
+const extractEntities = (conceptMapGroups: ConceptMapGroup[] | JSONObject[], schema: EnrichedBormSchema): Entity[] => {
 	// * Construct entities from the concept map group array. Each concept map group refers to a single BORM entity
 	const bormEntities = conceptMapGroups.map((conceptMapGroup) => {
 		// * Match the group as the main entity
@@ -37,7 +37,7 @@ const extractEntities = (conceptMapGroups: ConceptMapGroup[], schema: EnrichedBo
 };
 
 const extractRelations = (
-	conceptMapGroups: ConceptMapGroup[],
+	conceptMapGroups: ConceptMapGroup[] | JSONObject[],
 	relationNames: string[],
 	schema: EnrichedBormSchema,
 	// Extract to type
@@ -90,7 +90,7 @@ const extractRelations = (
 };
 
 const extractRoles = (
-	conceptMapGroups: ConceptMapGroup[],
+	conceptMapGroups: ConceptMapGroup[] | JSONObject[],
 	ownerPath: string,
 	rolePath: string,
 ): { ownerId: string; path: string; roleId: string }[] => {
